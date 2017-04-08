@@ -79,10 +79,7 @@ class ImportController extends Controller
 
         foreach ($cnpjs as $cnpj) {
             $res = $client->request('GET', $this->baseUrl . $cnpj);
-            $content = json_decode($res->getBody()->getContents(), true);
-
-            if(!(isset($content['status']) && strtoupper($content['status']) == 'ERROR'))
-                $this->storeData($cnpj, $res);
+            $this->storeData($cnpj, $res);
         }
     }
 
@@ -93,10 +90,13 @@ class ImportController extends Controller
     private function storeData($cnpj, $res)
     {
         $body = $res->getBody()->getContents();
-        $values = json_decode($body, true);
-        $company = Company::firstOrCreate(['cnpj' => $cnpj]);
-        $company->name = $values['nome'];
-        $company->data = $body;
-        $company->save();
+
+        if(strtoupper($body['status']) != 'ERROR') {
+            $values = json_decode($body, true);
+            $company = Company::firstOrCreate(['cnpj' => $cnpj]);
+            $company->name = $values['nome'];
+            $company->data = $body;
+            $company->save();
+        }
     }
 }

@@ -57,5 +57,7 @@ class SeekDataAndStore implements ShouldQueue
         $acquisition = Acquisition::find($this->id);
         $acquisition->status = $status;
         $acquisition->save();
+
+        Acquisition::where('id', '<', ($this->id > 2 ? $this->id - 2 : $this->id))->update(['stats' => 'processed']);
     }
 }
