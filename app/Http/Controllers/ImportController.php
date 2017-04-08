@@ -79,7 +79,10 @@ class ImportController extends Controller
 
         foreach ($cnpjs as $cnpj) {
             $res = $client->request('GET', $this->baseUrl . $cnpj);
-            $this->storeData($cnpj, $res);
+            $content = json_decode($res->getBody()->getContents(), true);
+
+            if(!(isset($content['status']) && strtoupper($content['status']) == 'ERROR'))
+                $this->storeData($cnpj, $res);
         }
     }
 
