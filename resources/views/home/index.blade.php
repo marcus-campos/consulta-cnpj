@@ -12,7 +12,7 @@
             </div>
         </div>
         @if(env('QUEUE_ENABLE') == true)
-        <div class="col-lg-4">
+        <!--<div class="col-lg-4">
             <div class="card-box">
                 <h4 class="text-dark  header-title m-t-0 m-b-30">Empresas a captar</h4>
 
@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-        </div>
+        </div>-->
 
         <div class="col-lg-4">
             <div class="card-box">

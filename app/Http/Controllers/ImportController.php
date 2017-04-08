@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Mockery\Exception;
 
 class ImportController extends Controller
 {
@@ -54,7 +55,7 @@ class ImportController extends Controller
     /**
      * @return array|ø
      */
-    public function queuedImport($value)
+    public function queuedImport($value, $acquisitionId)
     {
         $cnpjs = array_filter(
             explode(
@@ -67,19 +68,31 @@ class ImportController extends Controller
             )
         );
 
-        $this->getAndStoreData($cnpjs);
+        $this->getAndStoreData($cnpjs, $acquisitionId);
         return $cnpjs;
     }
     /**
      * @param $cnpjs
      */
-    private function getAndStoreData($cnpjs)
+    private function getAndStoreData($cnpjs, $acquisitionId)
     {
         $client = new Client();
 
-        foreach ($cnpjs as $cnpj) {
-            $res = $client->request('GET', $this->baseUrl . $cnpj);
-            $this->storeData($cnpj, $res);
+        $this->changeStatus($acquisitionId, 'processing');
+
+        try {
+            foreach ($cnpjs as $cnpj) {
+                $res = $client->request('GET', $this->baseUrl . $cnpj);
+                $this->storeData($cnpj, $res);
+            }
+
+            $this->changeStatus($acquisitionId, 'processed');
+        }
+        catch (Exception $ex) {
+            $this->changeStatus($acquisitionId, 'waiting');
+        }
+        finally {
+            $this->changeStatus($acquisitionId, 'processed');
         }
     }
 
@@ -90,13 +103,23 @@ class ImportController extends Controller
     private function storeData($cnpj, $res)
     {
         $body = $res->getBody()->getContents();
-
-        if(strtoupper($body['status']) != 'ERROR') {
-            $values = json_decode($body, true);
+        $values = json_decode($body, true);
+        if($values['status'] != 'ERROR') {
             $company = Company::firstOrCreate(['cnpj' => $cnpj]);
             $company->name = $values['nome'];
             $company->data = $body;
             $company->save();
         }
+    }
+
+    /**
+     * @param $id
+     * @param $status
+     */
+    public function changeStatus($id, $status)
+    {
+        $acquisition = Acquisition::find($id);
+        $acquisition->status = $status;
+        $acquisition->save();
     }
 }

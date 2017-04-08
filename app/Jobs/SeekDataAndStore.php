@@ -20,17 +20,17 @@ class SeekDataAndStore implements ShouldQueue
     /**
      * @var
      */
-    private $id;
+    private $acquisitionId;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($cnpjs, $id)
+    public function __construct($cnpjs, $acquisitionId)
     {
         $this->cnpjs = $cnpjs;
-        $this->id = $id;
+        $this->acquisitionId = $acquisitionId;
     }
 
     /**
@@ -41,23 +41,6 @@ class SeekDataAndStore implements ShouldQueue
     public function handle()
     {
         $import = new ImportController();
-
-        $this->changeStatus('processing');
-
-        $import->queuedImport($this->cnpjs);
-
-        $this->changeStatus('processed');
-    }
-
-    /**
-     * @param $status
-     */
-    public function changeStatus($status)
-    {
-        $acquisition = Acquisition::find($this->id);
-        $acquisition->status = $status;
-        $acquisition->save();
-
-        Acquisition::where('id', '<', ($this->id > 2 ? $this->id - 2 : $this->id))->update(['stats' => 'processed']);
+        $import->queuedImport($this->cnpjs, $this->acquisitionId);
     }
 }
