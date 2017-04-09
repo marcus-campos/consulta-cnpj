@@ -9,7 +9,9 @@
         </div>
     </div>
 
-    <span id="result"></span>
+    <span id="result">
+        @include('search.result')
+    </span>
 @endsection
 
 @section('js')
@@ -19,8 +21,7 @@
             if($('#search-txt').val().length >= 2)
                 search();
             else {
-                $('#search-label').hide();
-                $('#result-box').hide();
+                all();
             }
         });
 
@@ -38,6 +39,25 @@
                 },
                 success: function(resp){
                     $('#result').html(resp);
+                },
+                error: function (err) {
+                    $.Notification.autoHideNotify('error', 'bottom left', 'Error!!!','Ops... Algo não ocorreu como o esperado.');
+                }
+            });
+        }
+
+        function all() {
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                // make sure you respect the same origin policy with this url:
+                // http://en.wikipedia.org/wiki/Same_origin_policy
+                url: '{{ route('search') }}',
+                success: function(resp){
+                    $('#result').html(resp);
+                    $('#search-label').hide();
                 },
                 error: function (err) {
                     $.Notification.autoHideNotify('error', 'bottom left', 'Error!!!','Ops... Algo não ocorreu como o esperado.');

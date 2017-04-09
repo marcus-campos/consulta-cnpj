@@ -33,11 +33,11 @@
                             @endif
                             <div class="clearfix"></div>
                         </div>
+                        {{ $companies->render() }}
                     </div>
                 </div>
 
                 <!-- end All results tab -->
-
             </div>
         </div>
     </div>
