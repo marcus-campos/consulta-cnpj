@@ -42,7 +42,31 @@ class ImportController extends Controller
         );
 
         if(env('QUEUE_ENABLE', 'false') == 'true') {
-            dispatch(new SplitJobs($cnpjs));
+            if(count($cnpjs) < 100)
+                dispatch(new SplitJobs($cnpjs));
+            else
+            {
+                $numberOfCNPJs = count($cnpjs);
+                $lastOffSet = 0;
+                $substracted = 0;
+                $lenght = 100;
+
+                while ($numberOfCNPJs > 0)
+                {
+                    $arraySplice = array_slice($cnpjs, $lastOffSet, $lenght);
+
+                    dispatch(new SplitJobs($arraySplice));
+
+                    $numberOfCNPJs = $numberOfCNPJs - $lenght;
+                    $lastOffSet = $lenght + 1;
+
+                    if($numberOfCNPJs > 100)
+                        $lenght = $lenght + $lenght + 1;
+                    else
+                        $lenght = $lenght + $numberOfCNPJs;
+                }
+            }
+
             return Input::get('cnpjs');
         }
         else {
