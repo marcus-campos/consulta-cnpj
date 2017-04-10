@@ -64,7 +64,7 @@
             });
         }
 
-        $(document).on("change", "ext", function () {
+        $(document).on("change", "#ext", function () {
             generateLink();
         });
 
