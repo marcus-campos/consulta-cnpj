@@ -4,20 +4,26 @@
     </div>
 </div>
 <span id="download"></span>
-<div class="row">
-    <div id="export-box" class="col-md-12 form-inline text-right" hidden>
-        <label for="ext">Formato: </label>
-        <select name="ext" id="ext" class="form-control">
-            <option value="xls" selected>XLS</option>
-            <option value="csv">CSV</option>
-        </select>
-        <a href="#" id='export-fake' class="btn btn-success" disabled="true">Exportar</a>
-        <span id="export"></span>
-    </div>
-</div>
 <div class="row" id="result-box">
     <div class="col-lg-12">
         <div class="search-result-box m-t-40">
+            <div class="row">
+                <div id="export-box" class="col-md-12 form-inline text-right" hidden>
+                    <label for="ext">Formato: </label>
+                    <select name="ext" id="ext" class="form-control">
+                        <option value="xls" selected>XLS</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                    <a href="#" id='export-fake' class="btn btn-success" disabled="true">Exportar</a>
+                    <span id="export"></span>
+                </div>
+            </div>
+            <div class="checkbox checkbox-success text-right">
+                <input id="check-all" type="checkbox">
+                <label for="check-all">
+                    Selecionar todos
+                </label>
+            </div>
             <ul class="nav nav-tabs">
                 <li class="active">
                     <a href="#home" data-toggle="tab" aria-expanded="true">
@@ -36,7 +42,7 @@
                                 @foreach($companies as $company)
                                     <div class="search-item">
                                         <div class="text-right">
-                                            <input type="checkbox" name="company[]" id="company[]" value="{{ $company->id }}" />
+                                            <input type="checkbox" class="checkBoxClass" name="company[]" id="company[]" value="{{ $company->id }}" />
                                         </div>
                                         <h3 class="h5 font-600 m-b-5"><a href="{{ route('company', ['id' => $company->id]) }}">{{ $company->name }}</a></h3>
                                         <div class="font-13 text-success m-b-10">

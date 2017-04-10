@@ -11,6 +11,17 @@
     <span id="result">
         @include('search.result')
     </span>
+    <div class="row form-inline">
+        <div id="pagination" class="col-md-12 text-right">
+            <label for="paginate">Exibir: </label>
+            <select name="paginate" id="paginate" class="form-control">
+                <option value="10" selected>10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+            </select>
+        </div>
+    </div>
 @endsection
 
 @section('js')
@@ -24,6 +35,26 @@
             }
         });
 
+        $(document).on("change", "#paginate", function () {
+            if($('#search-txt').val().length >= 2)
+                search();
+            else {
+                all();
+            }
+        });
+
+        $(document).on("change", "#check-all", function () {
+            checkAll();
+        });
+
+        $(document).on("change", "#ext", function () {
+            generateLink();
+        });
+
+        $(document).on("change", "input[id='company[]']", function () {
+            generateLink();
+        });
+
         function search() {
             $.ajax({
                 type: 'POST',
@@ -34,7 +65,8 @@
                 // http://en.wikipedia.org/wiki/Same_origin_policy
                 url: '{{ route('search.post') }}',
                 data: {
-                    'search-txt': $('#search-txt').val()
+                    'search-txt': $('#search-txt').val(),
+                    paginate: $('#paginate').val()
                 },
                 success: function(resp){
                     $('#result').html(resp);
@@ -53,7 +85,10 @@
                 },
                 // make sure you respect the same origin policy with this url:
                 // http://en.wikipedia.org/wiki/Same_origin_policy
-                url: '{{ route('search') }}',
+                url: '{{ route('search.post') }}',
+                data: {
+                    paginate: $('#paginate').val()
+                },
                 success: function(resp){
                     $('#result').html(resp);
                     $('#search-label').hide();
@@ -63,14 +98,6 @@
                 }
             });
         }
-
-        $(document).on("change", "#ext", function () {
-            generateLink();
-        });
-
-        $(document).on("change", "input[id='company[]']", function () {
-            generateLink();
-        });
 
         function generateLink() {
             var selected = [];
@@ -98,6 +125,15 @@
                 $('#export-box').hide();
                 $('#export').html('');
             }
+        }
+
+        function checkAll() {
+            if($('#check-all').is(':checked'))
+                $(".checkBoxClass").prop('checked', true);
+            else
+                $(".checkBoxClass").prop('checked', false);
+
+            generateLink();
         }
 
     </script>

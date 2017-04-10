@@ -10,8 +10,10 @@ class SearchController extends Controller
 {
     public function index()
     {
+        $paginate = Input::get('paginate');
+
         $searchValue = 'todos os registros';
-        $companies = Company::orderBy('updated_at', 'desc')->paginate(15);
+        $companies = Company::orderBy('updated_at', 'desc')->paginate($paginate);
         return view('search.index', compact(
             'companies',
             'searchValue'
@@ -21,7 +23,9 @@ class SearchController extends Controller
     public function search()
     {
         $searchValue = Input::get('search-txt');
-        $companies = Company::where('name', 'like', '%'.Input::get('search-txt') .'%')->orWhere('cnpj', 'like', '%'.Input::get('search-txt') .'%')->paginate(15);
+        $paginate = Input::get('paginate');
+
+        $companies = Company::where('name', 'like', '%'. $searchValue .'%')->orWhere('cnpj', 'like', '%'. $searchValue .'%')->paginate($paginate);
 
         return view(
             'search.result',

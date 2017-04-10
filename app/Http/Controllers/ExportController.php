@@ -17,14 +17,12 @@ class ExportController extends Controller
         $ids = json_decode($ids, true);
 
         Excel::create('ExportCNPJs', function($excel) use (&$ids){
-            foreach ($ids as $id) {
-                $company = Company::find($id);
+            $companies = Company::whereIn('id', $ids)->get();
 
-                $excel->sheet('CNPJ - '. $company['cnpj'], function ($sheet) use(&$company) {
-                    $company = json_decode($company->data, true);
-                    $sheet->loadView('company.excel', ['company' => $company]);
-                });
-            }
+            $excel->sheet('CNPJs', function ($sheet) use(&$companies) {
+                $sheet->loadView('company.excel', ['companies' => $companies]);
+            });
+
         })->download($ext);
     }
 }
