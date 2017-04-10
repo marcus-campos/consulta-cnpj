@@ -14,6 +14,8 @@
 
 Route::get('/', ['uses' => 'HomeController@index'])->name('home');
 
+Route::get('export/{ids}/{ext}', ['uses' => 'ExportController@export'])->name('export');
+
 Route::group(['prefix' => 'import'], function () {
     Route::get('/', ['uses' => 'ImportController@index'])->name('import');
     Route::post('/', ['uses' => 'ImportController@import'])->name('import.post');

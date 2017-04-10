@@ -8,7 +8,6 @@
             </div>
         </div>
     </div>
-
     <span id="result">
         @include('search.result')
     </span>
@@ -64,5 +63,42 @@
                 }
             });
         }
+
+        $(document).on("change", "ext", function () {
+            generateLink();
+        });
+
+        $(document).on("change", "input[id='company[]']", function () {
+            generateLink();
+        });
+
+        function generateLink() {
+            var selected = [];
+            var ext = $("#ext").val();
+            var link;
+
+            $("input[id='company[]']").each(function() {
+                if ($(this).is(":checked")) {
+                    selected.push($(this).attr('value'));
+                }
+            });
+
+            link = "{{ URL::to('/') }}/export/[" + selected + "]/"+ext;
+
+            if(selected.length >= 1){
+                $('#export-box').show();
+                $('#export-fake').hide();
+                $('#export').html(
+                    '<a href="'+link+'" id="export" class="btn btn-success">Exportar</a>'
+                );
+            }
+            else
+            {
+                $('#export-fake').show();
+                $('#export-box').hide();
+                $('#export').html('');
+            }
+        }
+
     </script>
 @endsection
