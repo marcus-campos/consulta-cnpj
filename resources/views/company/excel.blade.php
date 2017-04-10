@@ -1,6 +1,7 @@
 <table class="table">
         <tbody>
             <tr>
+                <td width="60">Nome</td>
                 <td width="60">CNPJ</td>
                 <td width="60">Fantasia</td>
                 <td width="60">UF</td>
@@ -37,6 +38,9 @@
             @foreach($companies as $company)
                 <?php $company = json_decode($company->data, true) ?>
                 <tr>
+                    <td>
+                        {{ $company['nome'] }}
+                    </td>
                     <td>
                         {{ $company['cnpj'] }}
                     </td>
