@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SeekDataAndStore;
+use App\Jobs\SplitJobs;
 use App\Models\Acquisition;
 use App\Models\Company;
 use Illuminate\Http\Request;
@@ -23,8 +24,9 @@ class ImportController extends Controller
         return view('import.index');
     }
 
+
     /**
-     * @return array|ø
+     * @return mixed
      */
     public function import()
     {
@@ -40,51 +42,32 @@ class ImportController extends Controller
         );
 
         if(env('QUEUE_ENABLE', 'false') == 'true') {
-            $acquisitionId = Acquisition::create(['companies_count' => count($cnpjs)]);
-            dispatch(new SeekDataAndStore(Input::get('cnpjs'),  $acquisitionId));
+            dispatch(new SplitJobs($cnpjs));
             return Input::get('cnpjs');
         }
         else {
 
-            $this->getAndStoreData($cnpjs);
-            return Input::get('cnpjs');
+            foreach ($cnpjs as $cnpj)
+            {
+                $acquisitionId = Acquisition::create(['companies_count' => 1])->id;
+                $this->getAndStoreData($cnpj, $acquisitionId);
+            }
         }
     }
 
-
     /**
-     * @return array|ø
+     * @param $cnpj
+     * @param $acquisitionId
      */
-    public function queuedImport($value, $acquisitionId)
-    {
-        $cnpjs = array_filter(
-            explode(
-                ';',
-                str_replace(
-                    ' ',
-                    '',
-                    $value
-                )
-            )
-        );
-
-        $this->getAndStoreData($cnpjs, $acquisitionId);
-        return $cnpjs;
-    }
-    /**
-     * @param $cnpjs
-     */
-    private function getAndStoreData($cnpjs, $acquisitionId)
+    public function getAndStoreData($cnpj, $acquisitionId)
     {
         $client = new Client();
 
         $this->changeStatus($acquisitionId, 'processing');
 
         try {
-            foreach ($cnpjs as $cnpj) {
-                $res = $client->request('GET', $this->baseUrl . $cnpj);
-                $this->storeData($cnpj, $res);
-            }
+            $res = $client->request('GET', $this->baseUrl . $cnpj);
+            $this->storeData($cnpj, $res);
 
             $this->changeStatus($acquisitionId, 'processed');
         }
@@ -104,6 +87,7 @@ class ImportController extends Controller
     {
         $body = $res->getBody()->getContents();
         $values = json_decode($body, true);
+
         if($values['status'] != 'ERROR') {
             $company = Company::firstOrCreate(['cnpj' => $cnpj]);
             $company->name = $values['nome'];

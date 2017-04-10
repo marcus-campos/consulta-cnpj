@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Http\Controllers\ImportController;
 use App\Models\Acquisition;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -10,22 +9,22 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class SeekDataAndStore implements ShouldQueue
+class SplitJobs implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
      * @var
      */
-    private $cnpj;
+    private $cnpjs;
 
     /**
      * Create a new job instance.
      *
-     * @param $cnpj
+     * @param $cnpjs
      */
-    public function __construct($cnpj)
+    public function __construct($cnpjs)
     {
-        $this->cnpj = $cnpj;
+        $this->cnpjs = $cnpjs;
     }
 
     /**
@@ -35,8 +34,14 @@ class SeekDataAndStore implements ShouldQueue
      */
     public function handle()
     {
-        $acquisitionId = Acquisition::create(['companies_count' => 1])->id;
-        $import = new ImportController();
-        $import->getAndStoreData($this->cnpj, $acquisitionId);
+        $this->split();
+    }
+
+    public function split()
+    {
+        foreach ($this->cnpjs as $cnpj)
+        {
+            dispatch(new SeekDataAndStore($cnpj));
+        }
     }
 }
