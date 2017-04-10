@@ -6,9 +6,7 @@
                     <div class="col-sm-8">
                         <div class="product-right-info">
                             <h3><b>{{ $company['nome'] }}</b></h3>
-                            <h5><b>{{ $company['cnpj'] }}</b></h5>
                             <hr/>
-
                         </div>
                     </div>
                 </div>
