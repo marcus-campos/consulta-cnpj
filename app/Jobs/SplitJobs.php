@@ -16,21 +16,15 @@ class SplitJobs implements ShouldQueue
      * @var
      */
     private $cnpjs;
-    /**
-     * @var
-     */
-    private $acquisitionId;
 
     /**
      * Create a new job instance.
      *
      * @param $cnpjs
-     * @param $acquisitionId
      */
-    public function __construct($cnpjs, $acquisitionId)
+    public function __construct($cnpjs)
     {
         $this->cnpjs = $cnpjs;
-        $this->acquisitionId = $acquisitionId;
     }
 
     /**
@@ -47,7 +41,7 @@ class SplitJobs implements ShouldQueue
     {
         foreach ($this->cnpjs as $cnpj)
         {
-            dispatch(new SeekDataAndStore($cnpj, $this->acquisitionId));
+            dispatch(new SeekDataAndStore($cnpj));
         }
     }
 }
