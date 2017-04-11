@@ -15,4 +15,12 @@ class CompanyController extends Controller
 
         return view('company.index', compact('company'));
     }
+
+    public function delete($ids)
+    {
+        $ids = json_decode($ids);
+        Company::destroy($ids);
+
+        return redirect()->to('search');
+    }
 }

@@ -7,23 +7,20 @@
 <div class="row" id="result-box">
     <div class="col-lg-12">
         <div class="search-result-box m-t-40">
-            <div class="row">
-                <div id="export-box" class="col-md-12 form-inline text-right" hidden>
-                    <label for="ext">Formato: </label>
-                    <select name="ext" id="ext" class="form-control">
-                        <option value="xls" selected>XLS</option>
-                        <option value="csv">CSV</option>
-                    </select>
-                    <a href="#" id='export-fake' class="btn btn-success" disabled="true">Exportar</a>
-                    <span id="export"></span>
+            <div class="row col-md-12">
+                <div class="btn-group pull-right m-t-15">
+                    <button type="button" class="btn btn-default dropdown-toggle waves-effect waves-light" data-toggle="dropdown" aria-expanded="true">Ações <span class="m-l-5"><i class="fa fa-cog"></i></span></button>
+                    <ul class="dropdown-menu drop-menu-right" role="menu">
+                        <li><a href="#" id="check-all">Selecionar todos</a></li>
+                        <li id="divider1" class="divider" hidden></li>
+                        <li id="xls" hidden><a href="#">Export - XLS</a></li>
+                        <li id="csv" hidden><a href="#">Export - CSV</a></li>
+                        <li id="divider2" class="divider" hidden></li>
+                        <li id="excluir" hidden><a href="#">Excluir</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="checkbox checkbox-success text-right">
-                <input id="check-all" type="checkbox">
-                <label for="check-all">
-                    Selecionar todos
-                </label>
-            </div>
+
             <ul class="nav nav-tabs">
                 <li class="active">
                     <a href="#home" data-toggle="tab" aria-expanded="true">

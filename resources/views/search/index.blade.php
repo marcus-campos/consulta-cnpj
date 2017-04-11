@@ -29,6 +29,8 @@
 @section('js')
     <script>
 
+        var checked = false;
+
         $('#search-txt').keyup(function () {
             if($('#search-txt').val().length >= 2)
                 search();
@@ -49,7 +51,7 @@
             $.Notification.autoHideNotify('success', 'bottom left', 'Gerando arquivo...','Não feche ou mude de página, estamos processando seu pedido... Isto pode demorar um pouco devido ao grande volume de dados.');
         });
 
-        $(document).on("change", "#check-all", function () {
+        $(document).on("click", "#check-all", function () {
             checkAll();
         });
 
@@ -111,8 +113,8 @@
 
         function generateLink() {
             var selected = [];
-            var ext = $("#ext").val();
             var link;
+            var linkExcluir;
 
             $("input[id='company[]']").each(function() {
                 if ($(this).is(":checked")) {
@@ -120,20 +122,37 @@
                 }
             });
 
-            link = "{{ URL::to('/') }}/export/[" + selected + "]/"+ext;
+            link = "{{ URL::to('/') }}/export/[" + selected + "]";
+
+            linkExcluir = "{{ URL::to('/') }}/delete/[" + selected + "]";
 
             if(selected.length >= 1){
-                $('#export-box').show();
-                $('#export-fake').hide();
-                $('#export').html(
-                    '<a href="'+link+'" id="export-btn" class="btn btn-success">Exportar</a>'
+
+                $('#xls').show();
+                $('#csv').show();
+                $('#excluir').show();
+                $('#divider1').show();
+                $('#divider2').show();
+
+                $('#xls').html(
+                    '<a href="'+link+'/xls">Exportar - XLS</a>'
+                );
+
+                $('#csv').html(
+                    '<a href="'+link+'/csv">Exportar - CSV</a>'
+                );
+
+                $('#excluir').html(
+                    '<a href="'+linkExcluir+'">Excluir</a>'
                 );
             }
             else
             {
-                $('#export-fake').show();
-                $('#export-box').hide();
-                $('#export').html('');
+                $('#xls').hide();
+                $('#csv').hide();
+                $('#excluir').hide();
+                $('#divider1').hide();
+                $('#divider2').hide();
             }
         }
 
@@ -141,10 +160,15 @@
             if($('#paginate').val() == 0)
                 $.Notification.autoHideNotify('default', 'bottom left', 'Aguarde um instante...','Isto pode demorar um pouco devido ao grande volume de dados.');
 
-            if($('#check-all').is(':checked'))
+            if(checked === false) {
                 $(".checkBoxClass").prop('checked', true);
+                checked = true;
+            }
             else
+            {
                 $(".checkBoxClass").prop('checked', false);
+                checked = false;
+            }
 
             generateLink();
         }
