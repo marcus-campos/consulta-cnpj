@@ -38,5 +38,6 @@ class SeekDataAndStore implements ShouldQueue
         $acquisitionId = Acquisition::create(['companies_count' => 1])->id;
         $import = new ImportController();
         $import->getAndStoreData($this->cnpj, $acquisitionId);
+        sleep(5);
     }
 }
