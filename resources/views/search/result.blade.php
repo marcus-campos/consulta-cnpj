@@ -53,7 +53,10 @@
                             @endif
                             <div class="clearfix"></div>
                         </div>
-                        {{ $companies->render() }}
+                        @if($paginate != 0)
+                            {{ $companies->render() }}
+                        @endif
+
                     </div>
                 </div>
 

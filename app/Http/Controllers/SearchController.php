@@ -13,10 +13,16 @@ class SearchController extends Controller
         $paginate = Input::get('paginate');
 
         $searchValue = 'todos os registros';
-        $companies = Company::orderBy('updated_at', 'desc')->paginate($paginate);
+
+        if($paginate == 0)
+            $companies = Company::orderBy('updated_at', 'desc')->paginate($paginate);
+        else
+            $companies = Company::orderBy('updated_at', 'desc')->get();
+
         return view('search.index', compact(
             'companies',
-            'searchValue'
+            'searchValue',
+            'paginate'
         ));
     }
 
@@ -25,11 +31,14 @@ class SearchController extends Controller
         $searchValue = Input::get('search-txt');
         $paginate = Input::get('paginate');
 
-        $companies = Company::where('name', 'like', '%'. $searchValue .'%')->orWhere('cnpj', 'like', '%'. $searchValue .'%')->paginate($paginate);
+        if($paginate == 0)
+            $companies = Company::where('name', 'like', '%'. $searchValue .'%')->orWhere('cnpj', 'like', '%'. $searchValue .'%')->get();
+        else
+            $companies = Company::where('name', 'like', '%'. $searchValue .'%')->orWhere('cnpj', 'like', '%'. $searchValue .'%')->paginate($paginate);
 
         return view(
             'search.result',
-            compact('companies', 'searchValue')
+            compact('companies', 'searchValue', 'paginate')
         );
     }
 }

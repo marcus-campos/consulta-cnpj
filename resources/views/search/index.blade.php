@@ -19,6 +19,8 @@
                 <option value="50">50</option>
                 <option value="100">100</option>
                 <option value="500">500</option>
+                <option value="1000">1000</option>
+                <option value="0">Todos</option>
             </select>
         </div>
     </div>
@@ -43,6 +45,10 @@
             }
         });
 
+        $(document).on("click", "#export-btn", function () {
+            $.Notification.autoHideNotify('success', 'bottom left', 'Gerando arquivo...','Não feche ou mude de página, estamos processando seu pedido... Isto pode demorar um pouco devido ao grande volume de dados.');
+        });
+
         $(document).on("change", "#check-all", function () {
             checkAll();
         });
@@ -56,6 +62,8 @@
         });
 
         function search() {
+            if($('#paginate').val() == 0)
+                $.Notification.autoHideNotify('default', 'bottom left', 'Aguarde um instante...','Estamos carregando as informações... Isto pode demorar um pouco devido ao grande volume de dados.');
             $.ajax({
                 type: 'POST',
                 headers: {
@@ -78,6 +86,8 @@
         }
 
         function all() {
+            if($('#paginate').val() == 0)
+                $.Notification.autoHideNotify('default', 'bottom left', 'Aguarde um instante...','Estamos carregando as informações... Isto pode demorar um pouco devido ao grande volume de dados.');
             $.ajax({
                 type: 'POST',
                 headers: {
@@ -116,7 +126,7 @@
                 $('#export-box').show();
                 $('#export-fake').hide();
                 $('#export').html(
-                    '<a href="'+link+'" id="export" class="btn btn-success">Exportar</a>'
+                    '<a href="'+link+'" id="export-btn" class="btn btn-success">Exportar</a>'
                 );
             }
             else
@@ -128,6 +138,9 @@
         }
 
         function checkAll() {
+            if($('#paginate').val() == 0)
+                $.Notification.autoHideNotify('default', 'bottom left', 'Aguarde um instante...','Isto pode demorar um pouco devido ao grande volume de dados.');
+
             if($('#check-all').is(':checked'))
                 $(".checkBoxClass").prop('checked', true);
             else
