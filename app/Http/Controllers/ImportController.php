@@ -42,6 +42,9 @@ class ImportController extends Controller
         );
 
         if(env('QUEUE_ENABLE', 'false') == 'true') {
+
+            $acquisitionId = Acquisition::create(['companies_count' => count($cnpjs)])->id;
+
             if(count($cnpjs) < 100)
                 dispatch(new SplitJobs($cnpjs));
             else
@@ -127,6 +130,7 @@ class ImportController extends Controller
     public function changeStatus($id, $status)
     {
         $acquisition = Acquisition::find($id);
+        $acquisition->companies_count = $acquisition->companies_count - 1;
         $acquisition->status = $status;
         $acquisition->save();
     }

@@ -17,15 +17,21 @@ class SeekDataAndStore implements ShouldQueue
      * @var
      */
     private $cnpj;
+    /**
+     * @var
+     */
+    private $acquisitionId;
 
     /**
      * Create a new job instance.
      *
      * @param $cnpj
+     * @param $acquisitionId
      */
-    public function __construct($cnpj)
+    public function __construct($cnpj, $acquisitionId)
     {
         $this->cnpj = $cnpj;
+        $this->acquisitionId = $acquisitionId;
     }
 
     /**
@@ -35,9 +41,8 @@ class SeekDataAndStore implements ShouldQueue
      */
     public function handle()
     {
-        $acquisitionId = Acquisition::create(['companies_count' => 1])->id;
         $import = new ImportController();
-        $import->getAndStoreData($this->cnpj, $acquisitionId);
+        $import->getAndStoreData($this->cnpj, $this->acquisitionId);
         sleep(5);
     }
 }

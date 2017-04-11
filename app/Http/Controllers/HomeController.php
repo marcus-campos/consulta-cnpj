@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $waiting = Acquisition::where('status', 'waiting')->sum('companies_count');
+        $waiting = Acquisition::all()->sum('companies_count');
         $processing = Acquisition::where('status', 'processing')->sum('companies_count');
         $companies = Company::all()->count();
 
